@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import {
+  forwardRef, useEffect, useState, useImperativeHandle,
+} from 'react';
 import { useErrors } from '../../hooks/useErrors';
 import CategoriesService from '../../services/CategoriesService';
 import formatPhone from '../../utils/formatPhone';
@@ -12,7 +14,7 @@ import Select from '../Select';
 
 import { Form, ButtonContainer } from './styles';
 
-export default function ContactForm({ buttonLabel, onSubmit }) {
+const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -24,8 +26,6 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
   const {
     errors, setError, removeError, getErrorMessageByFieldName,
   } = useErrors();
-
-  const isFormValid = (name && errors.length === 0);
 
   useEffect(() => {
     async function loadCategories() {
@@ -39,6 +39,23 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
 
     loadCategories();
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    setFieldValues: (contact) => {
+      setName(contact.name ?? '');
+      setEmail(contact.email ?? '');
+      setPhone(formatPhone(contact.phone ?? ''));
+      setCategoryId(contact.category_id ?? '');
+    },
+    resetFields: () => {
+      setName('');
+      setEmail('');
+      setPhone('');
+      setCategoryId('');
+    },
+  }), []);
+
+  const isFormValid = (name && errors.length === 0);
 
   function handleNameChange(e) {
     setName(e.target.value);
@@ -77,11 +94,6 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
     });
 
     setIsSubmitting(false);
-
-    setName('');
-    setEmail('');
-    setPhone('');
-    setCategoryId('');
   }
 
   return (
@@ -145,9 +157,11 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
       </ButtonContainer>
     </Form>
   );
-}
+});
 
 ContactForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
+
+export default ContactForm;
