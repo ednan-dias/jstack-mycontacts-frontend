@@ -19,7 +19,7 @@ class ContactsService {
     });
   }
 
-  updateContact(id, contact) {
+  async updateContact(id, contact) {
     return this.httpClient.put(`/contacts/${id}`, {
       body: contact,
     });
