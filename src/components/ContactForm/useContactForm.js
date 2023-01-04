@@ -1,4 +1,5 @@
 import { useEffect, useState, useImperativeHandle } from 'react';
+import { flushSync } from 'react-dom';
 
 import { useErrors } from '../../hooks/useErrors';
 import useSafeAsyncState from '../../hooks/useSafeAsyncState';
@@ -40,7 +41,10 @@ export default function useContactForm(onSubmit, ref) {
 
   useImperativeHandle(ref, () => ({
     setFieldValues: (contact) => {
-      setName(contact.name ?? '');
+      flushSync(() => {
+        setName(contact.name ?? '');
+      });
+
       setEmail(contact.email ?? '');
       setPhone(formatPhone(contact.phone ?? ''));
       setCategoryId(contact.category.id ?? '');
