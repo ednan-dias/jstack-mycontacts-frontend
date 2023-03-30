@@ -3,7 +3,7 @@ import HttpClient from './utils/HttpClient';
 
 class CategoriesService {
   constructor() {
-    this.httpClient = new HttpClient(process.env.REACT_APP_BASE_URL);
+    this.httpClient = new HttpClient('http://54.233.81.159:3001');
   }
 
   async listCategories(signal) {
