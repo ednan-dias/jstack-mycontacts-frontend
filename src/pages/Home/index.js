@@ -35,8 +35,6 @@ export default function Home() {
   const isListEmpty = !hasError && (!isLoading && !hasContacts);
   const isSearchEmpty = !hasError && (hasContacts && filteredContacts.length < 1);
 
-  console.log(process.env.NODE_ENV);
-
   return (
     <Container>
       <Loader isLoading={isLoading} />
